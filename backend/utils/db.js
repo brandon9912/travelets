@@ -12,8 +12,4 @@ async function connect() {
   }
 }
 
-async function getCollection(collectionName) {
-  return db.connection.collection(collectionName);
-}
-
-module.exports = { connect, getCollection };
+module.exports = { connect };

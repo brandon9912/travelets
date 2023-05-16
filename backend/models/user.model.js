@@ -26,12 +26,17 @@ const UserSchema = new Schema({
 // User methods
 UserSchema.pre("save", async function (next) {
   const user = this;
-  const hash = await bcrypt.hash(this.password, 10);
-  if (this.isModified("password")) {
-    this.password = hash;
+
+  if (!user.isModified("password")) return next();
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(user.password, salt);
+    user.password = hash;
+    next();
+  } catch (error) {
+    next(error);
   }
-  this.hashed_password = hash;
-  next();
 });
 
 const User = mongoose.model("User", UserSchema);
