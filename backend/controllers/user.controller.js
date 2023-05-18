@@ -1,5 +1,6 @@
 const User = require("../models/user.model");
 const validator = require("validator");
+const jwt = require("jsonwebtoken");
 
 const userController = {
   // get all users
@@ -42,13 +43,25 @@ const userController = {
 
       // create new user
       const user = new User({ username, password, email });
-      const result = await user.save();
+      const newUser = await user.save();
+      const data = {
+        access_token: jwt.sign(
+          { userId: newUser._id },
+          process.env.TOKEN_SECRET
+        ),
+        access_expired: 3600,
+        user: {
+          id: newUser._id,
+          username: newUser.username,
+          email: newUser.email,
+        },
+      };
       res
         .status(200)
-        .json({ message: "User created successfully", data: result });
+        .json({ message: "User created successfully", data: data });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({ message: error.message });
     }
   },
 };
