@@ -11,6 +11,7 @@ db.connect();
 
 const indexRouter = require("./routes");
 const userRouter = require("./routes/user.routes");
+const tripRouter = require("./routes/trip.routes");
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use(cors());
 
 app.use("/api/v1", indexRouter);
 app.use("/api/v1", userRouter);
+app.use("/api/v1", tripRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -39,7 +41,7 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render("error");
+  res.json({ status: "false", message: err.message });
 });
 
 module.exports = app;
