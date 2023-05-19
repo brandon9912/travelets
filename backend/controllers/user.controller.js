@@ -64,6 +64,41 @@ const userController = {
       res.status(500).json({ message: error.message });
     }
   },
+  // user login
+  userLogin: async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      if (!email || !password) {
+        return res
+          .status(400)
+          .json({ message: "Please fill in all required fields" });
+      }
+      const userExists = await User.find({ email: email });
+      if (!userExists) {
+        return res.status(400).json({ message: "User does not exist" });
+      }
+      const isMatch = await bcrypt.compare(password, userExists[0].password);
+      if (!isMatch) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
+      const data = {
+        access_token: jwt.sign(
+          { userId: userExists[0]._id },
+          process.env.TOKEN_SECRET
+        ),
+        access_expired: 3600,
+        user: {
+          id: userExists[0]._id,
+          username: userExists[0].username,
+          email: userExists[0].email,
+        },
+      };
+      res.status(200).json({ message: "User logged in successfully", data });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: error.message });
+    }
+  },
 };
 
 module.exports = userController;
