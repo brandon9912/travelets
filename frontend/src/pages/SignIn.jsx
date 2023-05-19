@@ -90,7 +90,7 @@ const LoginPage = () => {
         width="100%"
         height="100vh"
         justifyContent="center"
-        alignItems="start"
+        alignItems="center"
       >
         <img src="../public/Logo.jpg" alt="logo" id="banner" />
         <Stack
