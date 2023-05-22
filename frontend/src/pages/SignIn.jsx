@@ -1,60 +1,3 @@
-// import { useState } from "react";
-// import { useForm } from "react-hook-form";
-// import axios from "axios";
-
-// const address = "http://localhost:3005/api/v1";
-
-// function SignIn() {
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-//   const { register, handleSubmit } = useForm();
-
-//   const handleLogin = (e) => {
-//     e.preventDefault();
-
-//     const user = {
-//       email,
-//       password,
-//     };
-
-//     const token = localStorage.getItem("token");
-
-//     axios
-//       .post(address + "/login", {
-//         headers: {
-//           "Content-Type": "application/json",
-//           "Access-Control-Allow-Origin": "*",
-//           Authorization: "Bearer " + token,
-//         },
-//       })
-//       .then((res) => {
-//         console.log(res.data);
-//       });
-//   };
-
-//   return (
-//     <>
-//       <h1>Login</h1>
-//       <form onSubmit={handleLogin}>
-//         <label htmlFor="email">Email</label>
-//         <input
-//           type="text"
-//           name="email"
-//           id="email"
-//           onChange={(e) => setEmail(e.target.value)}
-//         />
-//         <label htmlFor="password">Password</label>
-//         <input
-//           type="password"
-//           name="password"
-//           id="password"
-//           onChange={(e) => setPassword(e.target.value)}
-//         />
-//         <button type="submit">Login</button>
-//       </form>
-//     </>
-//   );
-// }
 import { useState } from "react";
 import {
   Flex,
@@ -73,6 +16,7 @@ import {
   InputRightElement,
 } from "@chakra-ui/react";
 import { FaUserAlt, FaLock } from "react-icons/fa";
+import Header from "../components/header";
 import "./SignIn.css";
 
 const CFaUserAlt = chakra(FaUserAlt);
@@ -92,6 +36,7 @@ const LoginPage = () => {
         justifyContent="center"
         alignItems="center"
       >
+        <Header />
         <img src="../public/Logo.jpg" alt="logo" id="banner" />
         <Stack
           flexDir="column"
