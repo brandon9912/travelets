@@ -16,12 +16,11 @@ import {
   useColorModeValue,
   Stack,
 } from "@chakra-ui/react";
-import { Link as ReachLink } from "@reach/router";
 import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
 
 const Links = [
   { name: "Home", link: "/" },
-  { name: "Signin", link: "/signin" },
+  { name: "Signin", link: "signin" },
 ];
 
 const NavLink = ({ children }) => (
@@ -33,8 +32,7 @@ const NavLink = ({ children }) => (
       textDecoration: "none",
       bg: useColorModeValue("gray.200", "gray.700"),
     }}
-    as={ReachLink}
-    to={children.link}
+    href={children.link}
   >
     {children.name}
   </Link>
@@ -105,7 +103,7 @@ export default function Header() {
           <Box pb={4} display={{ md: "none" }}>
             <Stack as={"nav"} spacing={4}>
               {Links.map((link) => (
-                <NavLink key={link}>{link}</NavLink>
+                <NavLink key={link.name}>{link}</NavLink>
               ))}
             </Stack>
           </Box>

@@ -17,7 +17,6 @@ import {
 } from "@chakra-ui/react";
 import { FaUserAlt, FaLock } from "react-icons/fa";
 import Header from "../components/header";
-import "./SignIn.css";
 
 const CFaUserAlt = chakra(FaUserAlt);
 const CFaLock = chakra(FaLock);
@@ -29,6 +28,7 @@ const LoginPage = () => {
 
   return (
     <>
+      <Header />
       <Flex
         flexDirection="column"
         width="100%"
@@ -36,7 +36,6 @@ const LoginPage = () => {
         justifyContent="center"
         alignItems="center"
       >
-        <Header />
         <img src="../public/Logo.jpg" alt="logo" id="banner" />
         <Stack
           flexDir="column"
