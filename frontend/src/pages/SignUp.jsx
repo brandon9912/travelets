@@ -1,16 +1,15 @@
-import { useState } from "react";
 import Header from "../components/header";
 import Footer from "../components/footer";
-import SignIn from "../components/signIn";
+import Signup from "../components/signUp";
 
-const LoginPage = () => {
+const SignUpPage = () => {
   return (
     <>
       <Header />
-      <SignIn />
+      <Signup />
       <Footer />
     </>
   );
 };
 
-export default LoginPage;
+export default SignUpPage;
