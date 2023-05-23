@@ -9,6 +9,7 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import Header from "../components/header";
+import Footer from "../components/footer";
 
 export default function CallToActionWithIllustration() {
   return (
@@ -26,7 +27,7 @@ export default function CallToActionWithIllustration() {
             fontSize={{ base: "3xl", sm: "4xl", md: "6xl" }}
             lineHeight={"110%"}
           >
-            Meeting scheduling{" "}
+            Traveling{" "}
             <Text as={"span"} color={"orange.400"}>
               made easy
             </Text>
@@ -58,6 +59,7 @@ export default function CallToActionWithIllustration() {
           </Flex>
         </Stack>
       </Container>
+      <Footer />
     </>
   );
 }

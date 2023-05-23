@@ -1,4 +1,3 @@
-// import { ReactNode } from "react";
 import {
   Box,
   Flex,
@@ -16,11 +15,12 @@ import {
   useColorModeValue,
   Stack,
 } from "@chakra-ui/react";
+import { Link as RouteLink } from "react-router-dom";
 import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
 
 const Links = [
   { name: "Home", link: "/" },
-  { name: "Signin", link: "signin" },
+  { name: "Signin", link: "/signin" },
 ];
 
 const NavLink = ({ children }) => (
@@ -32,7 +32,8 @@ const NavLink = ({ children }) => (
       textDecoration: "none",
       bg: useColorModeValue("gray.200", "gray.700"),
     }}
-    href={children.link}
+    as={RouteLink}
+    to={children.link}
   >
     {children.name}
   </Link>
