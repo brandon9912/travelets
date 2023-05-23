@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Flex, Box, Heading, Text, VStack } from "@chakra-ui/react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import PlaceItem from "./placeItem";
+import PlaceItem from "./placeCard";
 
 const placeList = ({}) => {
   const [places, setPlaces] = React.useState([
