@@ -7,7 +7,9 @@ import {
   Text,
   Button,
   Icon,
+  Link,
 } from "@chakra-ui/react";
+import { Link as RouteLink } from "react-router-dom";
 import Header from "../components/header";
 import Footer from "../components/footer";
 
@@ -27,7 +29,7 @@ export default function Home() {
             fontSize={{ base: "3xl", sm: "4xl", md: "6xl" }}
             lineHeight={"110%"}
           >
-            Traveling{" "}
+            Planning Trips{" "}
             <Text as={"span"} color={"orange.400"}>
               made easy
             </Text>
@@ -45,7 +47,9 @@ export default function Home() {
               bg={"orange.400"}
               _hover={{ bg: "orange.500" }}
             >
-              Get started
+              <Link as={RouteLink} to={"/trip"}>
+                Get started
+              </Link>
             </Button>
             <Button rounded={"full"} px={6}>
               Learn more

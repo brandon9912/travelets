@@ -741,54 +741,50 @@ const placeList = ({}) => {
       result.destination.index
     );
     setPlaces(items);
+    console.log(items);
   };
 
   return (
-    <Flex direction="column" align="center" justify="center">
-      {/* {places.map((place) => (
-        <PlaceItem key={place.id} place={place} />
-      ))} */}
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="droppable">
-          {(provided) => (
-            <VStack
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              borderTopRadius={6}
-              alignItems="flex-start"
-              spacing={0}
-            >
-              {places.map((place, index) => (
-                <Draggable
-                  key={place.place_id}
-                  draggableId={place.place_id + ""}
-                  index={index}
-                >
-                  {(provided, snapshot) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      style={getItemStyle(
-                        snapshot.isDragging,
-                        provided.draggableProps.style
-                      )}
-                    >
-                      <PlaceItem
-                        key={place.place_id}
-                        id={place.place_id}
-                        place={place}
-                      />
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </VStack>
-          )}
-        </Droppable>
-      </DragDropContext>
-    </Flex>
+    <DragDropContext onDragEnd={onDragEnd}>
+      <Droppable droppableId="droppable">
+        {(provided) => (
+          <VStack
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+            borderTopRadius={6}
+            alignItems="flex-start"
+            spacing={0}
+          >
+            {places.map((place, index) => (
+              <Draggable
+                key={place.place_id}
+                draggableId={place.place_id + ""}
+                index={index}
+              >
+                {(provided, snapshot) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    style={getItemStyle(
+                      snapshot.isDragging,
+                      provided.draggableProps.style
+                    )}
+                  >
+                    <PlaceItem
+                      key={place.place_id}
+                      id={place.place_id}
+                      place={place}
+                    />
+                  </div>
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
+          </VStack>
+        )}
+      </Droppable>
+    </DragDropContext>
   );
 };
 

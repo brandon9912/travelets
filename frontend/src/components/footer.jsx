@@ -20,6 +20,7 @@ const SocialButton = ({ children, label, href }) => {
       cursor={"pointer"}
       as={"a"}
       href={href}
+      target={"_blank"}
       display={"inline-flex"}
       alignItems={"center"}
       justifyContent={"center"}
@@ -51,13 +52,22 @@ export default function SmallWithSocial() {
       >
         <Text>© 2023 travelets. All rights reserved</Text>
         <Stack direction={"row"} spacing={6}>
-          <SocialButton label={"Twitter"} href={"#"}>
+          <SocialButton
+            label={"Twitter"}
+            href={"https://twitter.com/brandonmcc19th"}
+          >
             <FaTwitter />
           </SocialButton>
-          <SocialButton label={"YouTube"} href={"#"}>
+          <SocialButton
+            label={"YouTube"}
+            href={"https://www.youtube.com/channel/UCTpdZmT_fZhnUmOamEBicAA"}
+          >
             <FaYoutube />
           </SocialButton>
-          <SocialButton label={"Instagram"} href={"#"}>
+          <SocialButton
+            label={"Instagram"}
+            href={"https://www.instagram.com/ypcbrandon_9912/"}
+          >
             <FaInstagram />
           </SocialButton>
         </Stack>

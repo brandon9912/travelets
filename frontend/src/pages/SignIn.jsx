@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Header from "../components/header";
 import Footer from "../components/footer";
-import SignIn from "../components/signIn";
+import SignIn from "../components/user/signIn";
 
 const LoginPage = () => {
   return (
