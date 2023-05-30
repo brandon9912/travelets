@@ -12,8 +12,42 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
+import React, { useState } from "react";
+import api from "../../utils/api";
 
 export default function SimpleCard() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleuserEmail = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const handleuserPassword = (e) => {
+    setPassword(e.target.value);
+  };
+
+  const handleuserLogin = async (e) => {
+    e.preventDefault();
+
+    let data = {
+      email: email,
+      password: password,
+    };
+
+    const result = await api.signin(data);
+
+    if (result.status === "success") {
+      localStorage.setItem("token", result.token);
+      localStorage.setItem("user", JSON.stringify(result.data));
+      window.location.href = "/";
+    }
+
+    if (result.status === "error") {
+      alert(result.error);
+      window.location.href = "/signin";
+    }
+  };
   return (
     <Flex
       minH={"100vh"}
@@ -37,27 +71,28 @@ export default function SimpleCard() {
           <Stack spacing={4}>
             <FormControl id="email">
               <FormLabel>Email address</FormLabel>
-              <Input type="email" />
+              <Input type="email" onChange={handleuserEmail} />
             </FormControl>
             <FormControl id="password">
               <FormLabel>Password</FormLabel>
-              <Input type="password" />
+              <Input type="password" onChange={handleuserPassword} />
             </FormControl>
             <Stack spacing={10}>
-              <Stack
+              {/* <Stack
                 direction={{ base: "column", sm: "row" }}
                 align={"start"}
                 justify={"space-between"}
               >
                 <Checkbox>Remember me</Checkbox>
                 <Link color={"blue.400"}>Forgot password?</Link>
-              </Stack>
+              </Stack> */}
               <Button
                 bg={"blue.400"}
                 color={"white"}
                 _hover={{
                   bg: "blue.500",
                 }}
+                type="submit"
               >
                 Sign in
               </Button>
