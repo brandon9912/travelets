@@ -1,4 +1,6 @@
 const axios = require("axios");
+const jwt = require("jsonwebtoken");
+const Trip = require("../models/trip.model");
 
 const tripController = {
   getPlacesbyKeyword: (req, res) => {
@@ -21,6 +23,49 @@ const tripController = {
         res.status(500).json({ message: error.message });
       });
   },
+  createTrip: async (req, res) => {
+    try {
+      const token = req.headers.authorization.split(" ")[1];
+      const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+      const user_id = decoded.userId;
+      const { trip_name, trip_location, trip_start_date, trip_end_date, daily_budget } =
+        req.body;
+
+      const trip = new Trip({
+        trip_name: trip_name,
+        trip_location: trip_location,
+        trip_start_date: trip_start_date,
+        trip_end_date: trip_end_date,
+        user_id: user_id,
+        daily_budget: daily_budget,
+      });
+
+      const newTrip = await trip.save();
+      res.status(200).json({
+        message: "Create Trip successfully",
+        data: newTrip,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: error.message });
+    }
+  },
+  getTrip: async (req, res) => {
+    try {
+      const token = req.headers.authorization.split(" ")[1];
+      const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+      const user_id = decoded.userId;
+
+      const trip = await Trip.find({ user_id: user_id });
+      res.status(200).json({
+        message: "Get Trip successfully",
+        data: trip,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: error.message });
+    }
+  }
 };
 
 module.exports = tripController;

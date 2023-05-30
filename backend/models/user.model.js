@@ -21,6 +21,10 @@ const UserSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  login_at: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 // User methods

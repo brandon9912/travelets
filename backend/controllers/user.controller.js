@@ -79,11 +79,16 @@ const userController = {
         return res.status(400).json({ message: "User does not exist" });
       }
       const isMatch = await bcrypt.compare(password, userExists[0].password);
+      // TODO - if password is incorrect, return error
       if (!isMatch) {
         return res
           .status(400)
           .json({ message: "Invalid credentials: Incorrect Password" });
       }
+      await User.updateOne(
+        { _id: userExists[0]._id },
+        { login_at: Date.now() }
+      );
       const data = {
         access_token: jwt.sign(
           { userId: userExists[0]._id },
@@ -104,6 +109,16 @@ const userController = {
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: error.message, status: "error" });
+    }
+  },
+  // get user profile
+  getUserProfile: async (req, res) => {
+    try {
+      const user = await User.findById(req.user.userId);
+      res.status(200).json({ user: user });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: error.message });
     }
   },
 };

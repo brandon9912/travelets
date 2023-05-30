@@ -40,7 +40,6 @@ export default function SimpleCard() {
     console.log(result);
 
     if (result.data.status === "success") {
-      // alert(result.data.message);
       localStorage.setItem("token", result.data.data.access_token);
 
       if (!window.localStorage.getItem("token")) {

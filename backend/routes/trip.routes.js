@@ -1,8 +1,14 @@
 const express = require("express");
 const router = express.Router();
 
-const { getPlacesbyKeyword } = require("../controllers/trip.controller");
+const {
+  getPlacesbyKeyword,
+  createTrip,
+  getTrip,
+} = require("../controllers/trip.controller");
 
 router.get("/trip/google-map-places", getPlacesbyKeyword);
+router.post("/trip", createTrip);
+router.get("/trip", getTrip);
 
 module.exports = router;
