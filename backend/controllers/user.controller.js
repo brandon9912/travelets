@@ -1,6 +1,7 @@
 const User = require("../models/user.model");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const userController = {
   // get all users
@@ -79,24 +80,30 @@ const userController = {
       }
       const isMatch = await bcrypt.compare(password, userExists[0].password);
       if (!isMatch) {
-        return res.status(400).json({ message: "Invalid credentials" });
+        return res
+          .status(400)
+          .json({ message: "Invalid credentials: Incorrect Password" });
       }
       const data = {
         access_token: jwt.sign(
           { userId: userExists[0]._id },
           process.env.TOKEN_SECRET
         ),
-        access_expired: 3600,
+        access_expired: process.env.TOKEN_EXPIRE,
         user: {
           id: userExists[0]._id,
           username: userExists[0].username,
           email: userExists[0].email,
         },
       };
-      res.status(200).json({ message: "User logged in successfully", data });
+      res.status(200).json({
+        message: "User logged in successfully",
+        status: "success",
+        data,
+      });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ message: error.message, status: "error" });
     }
   },
 };

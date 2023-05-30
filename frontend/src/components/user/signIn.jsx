@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import api from "../../utils/api";
+import swal from "sweetalert2";
 
 export default function SimpleCard() {
   const [email, setEmail] = useState("");
@@ -21,6 +22,7 @@ export default function SimpleCard() {
 
   const handleuserEmail = (e) => {
     setEmail(e.target.value);
+    console.log(email);
   };
 
   const handleuserPassword = (e) => {
@@ -34,18 +36,50 @@ export default function SimpleCard() {
       email: email,
       password: password,
     };
-
     const result = await api.signin(data);
+    console.log(result);
 
-    if (result.status === "success") {
-      localStorage.setItem("token", result.token);
-      localStorage.setItem("user", JSON.stringify(result.data));
-      window.location.href = "/";
+    if (result.data.status === "success") {
+      // alert(result.data.message);
+      localStorage.setItem("token", result.data.data.access_token);
+
+      if (!window.localStorage.getItem("token")) {
+        console.log("jwtfail");
+        swal
+          .fire({
+            title: "Login Failed",
+            text: "Please try again",
+            icon: "error",
+            confirmButtonText: "OK",
+          })
+          .then(() => {
+            window.location.href = "/signin";
+          });
+      } else {
+        swal
+          .fire({
+            title: "Login Success",
+            text: "You are now logged in",
+            icon: "success",
+            confirmButtonText: "OK",
+          })
+          .then(() => {
+            window.location.href = "/";
+          });
+      }
     }
 
-    if (result.status === "error") {
-      alert(result.error);
-      window.location.href = "/signin";
+    if (result.data.status === "error") {
+      swal
+        .fire({
+          title: "Login Failed",
+          text: result.data.message,
+          icon: "error",
+          confirmButtonText: "OK",
+        })
+        .then(() => {
+          window.location.href = "/signin";
+        });
     }
   };
   return (
@@ -93,6 +127,7 @@ export default function SimpleCard() {
                   bg: "blue.500",
                 }}
                 type="submit"
+                onClick={handleuserLogin}
               >
                 Sign in
               </Button>
