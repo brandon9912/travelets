@@ -3,6 +3,8 @@ import {
   Box,
   FormControl,
   FormLabel,
+  FormErrorMessage,
+  FormHelperText,
   Input,
   Checkbox,
   Stack,
@@ -15,14 +17,17 @@ import {
 import React, { useState } from "react";
 import api from "../../utils/api";
 import swal from "sweetalert2";
+import { Link as RouteLink } from "react-router-dom";
 
 export default function SimpleCard() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const isEmailError = email === "";
+  const isPasswordError = password === "";
+
   const handleuserEmail = (e) => {
     setEmail(e.target.value);
-    console.log(email);
   };
 
   const handleuserPassword = (e) => {
@@ -92,7 +97,7 @@ export default function SimpleCard() {
         <Stack align={"center"}>
           <Heading fontSize={"3xl"}>Sign in to your account</Heading>
           <Text fontSize={"lg"} color={"gray.600"}>
-            to enjoy all of our cool <Link color={"blue.400"}>features</Link> ✌️
+            to enjoy cool features ✌️
           </Text>
         </Stack>
         <Box
@@ -102,15 +107,25 @@ export default function SimpleCard() {
           p={8}
         >
           <Stack spacing={4}>
-            <FormControl id="email">
+            <FormControl id="email" isInvalid={isEmailError} isRequired>
               <FormLabel>Email address</FormLabel>
               <Input type="email" onChange={handleuserEmail} />
+              {!isEmailError ? (
+                <FormHelperText>Enter email to login</FormHelperText>
+              ) : (
+                <FormErrorMessage>Email is required</FormErrorMessage>
+              )}
             </FormControl>
-            <FormControl id="password">
+            <FormControl id="password" isInvalid={isPasswordError} isRequired>
               <FormLabel>Password</FormLabel>
               <Input type="password" onChange={handleuserPassword} />
+              {!isPasswordError ? (
+                <FormHelperText>Enter password to login</FormHelperText>
+              ) : (
+                <FormErrorMessage>Password is required</FormErrorMessage>
+              )}
             </FormControl>
-            <Stack spacing={10}>
+            <Stack spacing={3}>
               {/* <Stack
                 direction={{ base: "column", sm: "row" }}
                 align={"start"}
@@ -130,6 +145,25 @@ export default function SimpleCard() {
               >
                 Sign in
               </Button>
+              <Button
+                bg={"blue.200"}
+                color={"white"}
+                _hover={{
+                  bg: "blue.300",
+                }}
+                type="submit"
+                as={RouteLink}
+                to={"/signup"}
+              >
+                Sign Up
+              </Button>
+              {/* <Stack
+                direction={{ base: "column", sm: "row" }}
+                align={"center"}
+                justify={"space-between"}
+              >
+                <Link color={"blue.400"} as={RouteLink} to={"/signup"}>Sign Up</Link>
+              </Stack> */}
             </Stack>
           </Stack>
         </Box>

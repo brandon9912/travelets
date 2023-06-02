@@ -16,9 +16,42 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { useNavigate } from "react-router-dom";
+import api from "../../utils/api";
+import { FaWindows } from "react-icons/fa";
 
 export default function SignupCard() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUserName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+  const handleSignUp = async () => {
+    console.log("Sign up");
+    const data = {
+      username: username,
+      email: email,
+      password: password,
+    };
+    try {
+      const result = await api.signup(data);
+      console.log(result);
+      window.location.href = "/signin";
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleEmail = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const handlePassword = (e) => {
+    setPassword(e.target.value);
+  };
+  const handleUsername = (e) => {
+    setUserName(e.target.value);
+  };
 
   return (
     <Flex
@@ -45,26 +78,23 @@ export default function SignupCard() {
           <Stack spacing={4}>
             <HStack>
               <Box>
-                <FormControl id="firstName" isRequired>
-                  <FormLabel>First Name</FormLabel>
-                  <Input type="text" />
-                </FormControl>
-              </Box>
-              <Box>
-                <FormControl id="lastName">
-                  <FormLabel>Last Name</FormLabel>
-                  <Input type="text" />
+                <FormControl id="username" isRequired>
+                  <FormLabel>Username</FormLabel>
+                  <Input type="text" onChange={handleUsername} />
                 </FormControl>
               </Box>
             </HStack>
             <FormControl id="email" isRequired>
               <FormLabel>Email address</FormLabel>
-              <Input type="email" />
+              <Input type="email" onChange={handleEmail} />
             </FormControl>
             <FormControl id="password" isRequired>
               <FormLabel>Password</FormLabel>
               <InputGroup>
-                <Input type={showPassword ? "text" : "password"} />
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  onChange={handlePassword}
+                />
                 <InputRightElement h={"full"}>
                   <Button
                     variant={"ghost"}
@@ -86,6 +116,7 @@ export default function SignupCard() {
                 _hover={{
                   bg: "blue.500",
                 }}
+                onClick={handleSignUp}
               >
                 Sign up
               </Button>

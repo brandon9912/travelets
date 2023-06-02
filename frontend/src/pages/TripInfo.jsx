@@ -19,7 +19,9 @@ import api from "../utils/api";
 import { format, eachDayOfInterval } from "date-fns";
 import swal from "sweetalert2";
 
-const Trip = () => {
+const TripInfo = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   // Google Map
   const [center, setCenter] = useState(null);
   const [marker, setMarker] = useState(null);
@@ -29,48 +31,50 @@ const Trip = () => {
   // Trip Plan
 
   const [tripPlan, setTripPlan] = useState({});
+  const [trip, setTrip] = useState({});
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [selectedDay, setSelectedDay] = useState("Day 1");
   const [totalDays, setTotalDays] = useState(1);
+  const [dateArray, setDateArray] = useState([]);
 
-  const location = useLocation();
-
-  const destination = location.state.data.trip_location;
-  const trip_id = location.state.data._id;
-  const trip_name = location.state.data.trip_name;
-  const trip_start_date = location.state.data.trip_start_date;
-  const trip_end_date = location.state.data.trip_end_date;
-  const daily_budget = location.state.data.daily_budget;
-  let startDate = new Date(trip_start_date);
-  let endDate = new Date(trip_end_date);
   function generateDateArray(startDate, endDate) {
     const dates = eachDayOfInterval({ start: startDate, end: endDate });
-
     return dates.map((date) => format(date, "MM/dd/yyyy"));
   }
-  const dateArray = generateDateArray(startDate, endDate);
-  // console.log(dateArray);
-  const days = location.state.days;
 
-  const navigate = useNavigate();
+  const trip_id = location.state.data._id;
   useEffect(() => {
-    if (!destination) {
-      alert("You need to create a trip first");
-      navigate("/trip/create");
-    }
+    const getTripPlan = async () => {
+      const result = await api.getTripbyId(trip_id);
+      console.log(result);
+      setTrip(result.data.data);
+      setTripPlan(result.data.data.trip_plan);
+      let startDate = new Date(result.data.data.trip_start_date);
+      let endDate = new Date(result.data.data.trip_end_date);
+      setStartDate(startDate);
+      setEndDate(endDate);
+      setDateArray(generateDateArray(startDate, endDate));
+    };
+    getTripPlan();
+  }, []);
+
+  useEffect(() => {
     const getTrip = async () => {
-      const location = await api.getPlacesbyKeyword(destination);
+      const location = await api.getPlacesbyKeyword(trip.trip_location);
+      console.log(location);
       setCenter(location.data.data.results[0].geometry.location);
       const result = await api.getNearbyPlaces(
-        destination,
+        trip.trip_location,
         10000,
         location.data.data.results[0].geometry.location.lat,
         location.data.data.results[0].geometry.location.lng
       );
       setPlaces(result.data.data.results);
-      setTotalDays(days);
+      setTotalDays();
     };
     getTrip();
-  }, []);
+  }, [trip]);
 
   const handleChildStateChange = (placeDetail) => {
     setMarker(placeDetail.geometry.location);
@@ -166,13 +170,11 @@ const Trip = () => {
   const handleSaveTrip = async () => {
     console.log(tripPlan);
     const data = {
-      trip_name: trip_name,
-      trip_location: destination,
-      trip_start_date: trip_start_date,
-      trip_end_date: trip_end_date,
-      trip_daily_budget: daily_budget,
+      trip_name: trip.trip_name,
+      trip_location: trip.trip_location,
+      trip_start_date: trip.trip_start_date,
+      trip_end_date: trip.trip_end_date,
       trip_plan: tripPlan,
-      trip_days: days,
     };
     try {
       const result = await api.updateTripbyId(data, trip_id);
@@ -319,7 +321,7 @@ const Trip = () => {
                   </Box>
                 )}
               </Droppable>
-              <Button onClick={handleSaveTrip}>建立行程</Button>
+              <Button onClick={handleSaveTrip}>儲存行程</Button>
             </Stack>
           </DragDropContext>
         </Flex>
@@ -330,4 +332,4 @@ const Trip = () => {
   );
 };
 
-export default Trip;
+export default TripInfo;

@@ -18,6 +18,7 @@ const userController = {
   // user register
   userRegister: async (req, res) => {
     try {
+      console.log(req.body);
       var { username } = req.body;
       const { password, email } = req.body;
 
@@ -114,7 +115,11 @@ const userController = {
   // get user profile
   getUserProfile: async (req, res) => {
     try {
-      const user = await User.findById(req.user.userId);
+      const token = req.headers.authorization.split(" ")[1];
+      const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+      const user_id = decoded.userId;
+
+      const user = await User.findById({ _id: user_id });
       res.status(200).json({ user: user });
     } catch (error) {
       console.log(error);

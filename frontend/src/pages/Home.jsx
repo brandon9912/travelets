@@ -15,56 +15,78 @@ import Footer from "../components/footer";
 
 export default function Home() {
   return (
-    <>
+    <Flex minHeight="100vh" flexDirection="column">
       <Header />
-      <Container maxW={"5xl"}>
-        <Stack
-          textAlign={"center"}
+      <Flex flexGrow={1} flexDirection={"column"} justifyContent={"center"}>
+        <Heading
+          fontWeight={800}
+          fontSize={{ base: "3xl", sm: "6xl", md: "8xl" }}
+          lineHeight={"110%"}
           align={"center"}
-          spacing={{ base: 8, md: 10 }}
-          py={{ base: 20, md: 28 }}
+          pt={"10"}
         >
-          <Heading
-            fontWeight={600}
-            fontSize={{ base: "3xl", sm: "4xl", md: "6xl" }}
-            lineHeight={"110%"}
-          >
-            Planning Trips{" "}
-            <Text as={"span"} color={"orange.400"}>
-              made easy
-            </Text>
-          </Heading>
-          <Text color={"gray.500"} maxW={"3xl"}>
-            Never miss a meeting. Never be late for one too. Keep track of your
-            meetings and receive smart reminders in appropriate times. Read your
-            smart “Daily Agenda” every morning.
+          Trave
+          <Text as={"span"} color={"#76C450"}>
+            lets
           </Text>
-          <Stack spacing={6} direction={"row"}>
-            <Button
-              rounded={"full"}
-              px={6}
-              colorScheme={"orange"}
-              bg={"orange.400"}
-              _hover={{ bg: "orange.500" }}
+        </Heading>
+        <Container maxW={"5xl"}>
+          <Stack
+            textAlign={"center"}
+            align={"center"}
+            spacing={{ base: 8, md: 8 }}
+            py={{ base: 15, md: 15 }}
+          >
+            <Heading
+              fontWeight={600}
+              fontSize={{ base: "3xl", sm: "4xl", md: "6xl" }}
+              lineHeight={"110%"}
             >
-              <Link as={RouteLink} to={"/trip"}>
-                Get started
-              </Link>
-            </Button>
-            <Button rounded={"full"} px={6}>
-              Learn more
-            </Button>
+              Planning Trips{" "}
+              <Text as={"span"} color={"#76C450"}>
+                made easy
+              </Text>
+            </Heading>
+            <Text color={"gray.500"} maxW={"3xl"}>
+              Creating trips will be a breeze with our app. With a user-friendly
+              interface and intuitive features, you can effortlessly plan and
+              organize your travel adventures in just a few simple steps.
+            </Text>
+            <Stack spacing={6} direction={"row"}>
+              <Button
+                rounded={"full"}
+                px={6}
+                colorScheme={"orange"}
+                bg={"orange.400"}
+                _hover={{ bg: "orange.500" }}
+              >
+                <Link as={RouteLink} to={"/tripCreate"}>
+                  Get started
+                </Link>
+              </Button>
+              <Button
+                rounded={"full"}
+                px={6}
+                colorScheme={"teal"}
+                bg={"teal.400"}
+                _hover={{ bg: "teal.500" }}
+              >
+                <Link as={RouteLink} to={"/signup"}>
+                  Sign Up
+                </Link>
+              </Button>
+            </Stack>
+            <Flex w={"full"}>
+              <Illustration
+                height={{ sm: "24rem", lg: "28rem" }}
+                mt={{ base: 12, sm: 16 }}
+              />
+            </Flex>
           </Stack>
-          <Flex w={"full"}>
-            <Illustration
-              height={{ sm: "24rem", lg: "28rem" }}
-              mt={{ base: 12, sm: 16 }}
-            />
-          </Flex>
-        </Stack>
-      </Container>
+        </Container>
+      </Flex>
       <Footer />
-    </>
+    </Flex>
   );
 }
 

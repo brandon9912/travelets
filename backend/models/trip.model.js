@@ -17,6 +17,11 @@ const TripSchema = new Schema({
     type: Date,
     required: true,
   },
+  status: {
+    type: String,
+    enum: ["planning", "completed", "ended", "ongoing"],
+    default: "planning",
+  },
   trip_end_date: {
     type: Date,
     required: true,
@@ -29,6 +34,10 @@ const TripSchema = new Schema({
     type: Number,
     default: 6000,
   },
+  trip_days: {
+    type: Number,
+    default: 0,
+  },
   trip_created_at: {
     type: Date,
     default: Date.now,
@@ -36,6 +45,10 @@ const TripSchema = new Schema({
   trip_updated_at: {
     type: Date,
     default: Date.now,
+  },
+  trip_plan: {
+    type: Object,
+    default: {},
   },
 });
 
