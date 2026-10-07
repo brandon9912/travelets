@@ -15,7 +15,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import api from "../../utils/api";
+import api, { errorMessage } from "../../utils/api";
 import swal from "sweetalert2";
 import { Link as RouteLink } from "react-router-dom";
 
@@ -41,8 +41,18 @@ export default function SimpleCard() {
       email: email,
       password: password,
     };
-    const result = await api.signin(data);
-    console.log(result);
+    let result;
+    try {
+      result = await api.signin(data);
+    } catch (error) {
+      swal.fire({
+        title: "Login Failed",
+        text: errorMessage(error),
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
 
     if (result.data.status === "success") {
       localStorage.setItem("token", result.data.data.access_token);

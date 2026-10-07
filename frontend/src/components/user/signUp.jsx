@@ -17,7 +17,8 @@ import {
 import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
-import api from "../../utils/api";
+import api, { errorMessage } from "../../utils/api";
+import swal from "sweetalert2";
 import { FaWindows } from "react-icons/fa";
 
 export default function SignupCard() {
@@ -34,11 +35,15 @@ export default function SignupCard() {
       password: password,
     };
     try {
-      const result = await api.signup(data);
-      console.log(result);
+      await api.signup(data);
       window.location.href = "/signin";
     } catch (error) {
-      console.log(error);
+      swal.fire({
+        title: "Sign Up Failed",
+        text: errorMessage(error),
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
   };
 
