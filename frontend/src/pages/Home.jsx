@@ -60,7 +60,7 @@ export default function Home() {
                 bg={"orange.400"}
                 _hover={{ bg: "orange.500" }}
               >
-                <Link as={RouteLink} to={"/tripCreate"}>
+                <Link as={RouteLink} to={"/create"}>
                   Get started
                 </Link>
               </Button>

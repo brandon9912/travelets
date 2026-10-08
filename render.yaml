@@ -1,0 +1,20 @@
+# Render Blueprint for the API. The frontend deploys separately (see README).
+services:
+  - type: web
+    name: travelets-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/v1/healthcheck
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: CLIENT_ORIGIN
+        sync: false
+      - key: TOKEN_SECRET
+        generateValue: true
+      - key: TOKEN_EXPIRE
+        value: "3600"

@@ -12,6 +12,7 @@ const UserSchema = new Schema({
   password: {
     type: String,
     required: true,
+    select: false,
   },
   email: {
     type: String,
@@ -41,6 +42,14 @@ UserSchema.pre("save", async function (next) {
   } catch (error) {
     next(error);
   }
+});
+
+// Never send the password hash to clients
+UserSchema.set("toJSON", {
+  transform: (doc, ret) => {
+    delete ret.password;
+    return ret;
+  },
 });
 
 const User = mongoose.model("User", UserSchema);

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import api from "../../utils/api";
+import api, { errorMessage } from "../../utils/api";
 import swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import {
@@ -64,12 +64,22 @@ const tripCreate = () => {
       trip_location: destination,
       trip_start_date: startDate,
       trip_end_date: endDate,
-      trip_daily_budget: dailyBudget,
+      daily_budget: dailyBudget,
     };
 
     let days = (Date.parse(endDate) - Date.parse(startDate)) / 86400000 + 1;
-    const result = await api.createTrip(data);
-    console.log(result);
+    let result;
+    try {
+      result = await api.createTrip(data);
+    } catch (error) {
+      swal.fire({
+        title: "Create Trip Failed",
+        text: errorMessage(error),
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
 
     if (result.data.status === "success") {
       swal

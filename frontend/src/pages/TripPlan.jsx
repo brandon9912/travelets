@@ -14,8 +14,8 @@ import {
   Stack,
   Button,
 } from "@chakra-ui/react";
-import { useLocation, useNavigate } from "react-router-dom";
-import api from "../utils/api";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import api, { errorMessage } from "../utils/api";
 import { format, eachDayOfInterval } from "date-fns";
 import swal from "sweetalert2";
 
@@ -53,10 +53,6 @@ const Trip = () => {
 
   const navigate = useNavigate();
   useEffect(() => {
-    if (!destination) {
-      alert("You need to create a trip first");
-      navigate("/trip/create");
-    }
     const getTrip = async () => {
       const location = await api.getPlacesbyKeyword(destination);
       setCenter(location.data.data.results[0].geometry.location);
@@ -170,15 +166,20 @@ const Trip = () => {
       trip_location: destination,
       trip_start_date: trip_start_date,
       trip_end_date: trip_end_date,
-      trip_daily_budget: daily_budget,
+      daily_budget: daily_budget,
       trip_plan: tripPlan,
       trip_days: days,
     };
     try {
-      const result = await api.updateTripbyId(data, trip_id);
-      console.log(result);
+      await api.updateTripbyId(data, trip_id);
     } catch (error) {
-      console.log(error);
+      swal.fire({
+        title: "Could not save trip",
+        text: errorMessage(error),
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+      return;
     }
     swal
       .fire({
@@ -330,4 +331,14 @@ const Trip = () => {
   );
 };
 
-export default Trip;
+// The planner only works for a trip that was just created, so send anyone
+// who lands here directly (e.g. after a refresh) to create one first.
+const TripPlanPage = () => {
+  const location = useLocation();
+  if (!location.state?.data) {
+    return <Navigate to="/create" replace />;
+  }
+  return <Trip />;
+};
+
+export default TripPlanPage;

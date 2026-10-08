@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const isAuth = require("../middleware/isAuth");
 
 const {
   getPlacesbyKeyword,
@@ -10,6 +11,10 @@ const {
   getPlaceDetail,
   getTripbyId,
 } = require("../controllers/trip.controller");
+
+// Every trip route needs a signed-in user, including the Google Places
+// proxies so the server's API key can't be used anonymously.
+router.use("/trip", isAuth);
 
 router.get("/trip/google-map-places", getPlacesbyKeyword);
 router.get("/trip/nearby-places", getNearbyPlaces);

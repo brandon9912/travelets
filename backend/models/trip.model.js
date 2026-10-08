@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
-const User = require("./user.model");
 
 // Trip Schema
 const TripSchema = new Schema({
@@ -52,18 +51,30 @@ const TripSchema = new Schema({
   },
 });
 
+const badRequest = (message) => {
+  const error = new Error(message);
+  error.status = 400;
+  return error;
+};
+
+const startOfToday = () => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return today;
+};
+
 // Trip Methods
 TripSchema.pre("save", async function (next) {
   const trip = this;
   // check start_date < end_date
   if (trip.trip_start_date > trip.trip_end_date) {
-    return next(new Error("Start date must be before end date"));
+    return next(badRequest("Start date must be before end date"));
   }
-  // check start_date > current_date
-  if (trip.trip_start_date < Date.now()) {
-    return next(new Error("Start date must be after current date"));
+  // only new trips must start in the future, so trips can still be
+  // edited once they are underway
+  if (trip.isNew && trip.trip_start_date < startOfToday()) {
+    return next(badRequest("Start date must not be in the past"));
   }
-  // check if trip_name already exists
   trip.trip_updated_at = Date.now();
   next();
 });

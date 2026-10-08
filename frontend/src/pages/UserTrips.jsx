@@ -23,6 +23,7 @@ const UserTrips = () => {
     if (!localStorage.getItem("token")) {
       alert("You need to login first");
       navigate("/signin");
+      return;
     }
     async function getUser() {
       const result = await api.getUserProfile();

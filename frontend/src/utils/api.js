@@ -1,86 +1,69 @@
 import axios from "axios";
 
+const client = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3005/api/v1",
+  headers: { "Content-Type": "application/json" },
+});
+
+// Send the login token with every request
+client.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// An expired or invalid token means the user has to sign in again
+client.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401 && localStorage.getItem("token")) {
+      localStorage.removeItem("token");
+      window.location.href = "/signin";
+    }
+    return Promise.reject(error);
+  }
+);
+
+// Readable message from a failed request, for alerts
+export const errorMessage = (error) =>
+  error.response?.data?.message || "Something went wrong, please try again";
+
 const api = {
-  hostname: "http://localhost:3005/api/v1",
   signup(data) {
-    return axios.post(`${this.hostname}/user`, data, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    return client.post("/user", data);
   },
   signin(data) {
-    return axios.post(`${this.hostname}/user/login`, data, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    return client.post("/user/login", data);
   },
   getUserProfile() {
-    return axios.get(`${this.hostname}/user/profile`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
+    return client.get("/user/profile");
   },
   getPlacesbyKeyword(keyword, radius) {
-    return axios.get(`${this.hostname}/trip/google-map-places`, {
-      params: {
-        keyword: keyword,
-        radius: radius,
-      },
+    return client.get("/trip/google-map-places", {
+      params: { keyword, radius },
     });
   },
   getNearbyPlaces(keyword, radius, latitude, longitude) {
-    return axios.get(`${this.hostname}/trip/nearby-places`, {
-      params: {
-        keyword: keyword,
-        radius: radius,
-        latitude: latitude,
-        longitude: longitude,
-      },
+    return client.get("/trip/nearby-places", {
+      params: { keyword, radius, latitude, longitude },
     });
   },
   getPlaceDetail(place_id) {
-    return axios.get(`${this.hostname}/trip/place-detail`, {
-      params: {
-        place_id: place_id,
-      },
-    });
+    return client.get("/trip/place-detail", { params: { place_id } });
   },
   createTrip(data) {
-    return axios.post(`${this.hostname}/trip`, data, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
+    return client.post("/trip", data);
   },
   getTripbyUserId() {
-    return axios.get(`${this.hostname}/trip`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
+    return client.get("/trip");
   },
   getTripbyId(trip_id) {
-    return axios.get(`${this.hostname}/trip/${trip_id}`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
+    return client.get(`/trip/${trip_id}`);
   },
   updateTripbyId(data, trip_id) {
-    return axios.put(`${this.hostname}/trip/${trip_id}`, data, {
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*", // Allow CORS
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
+    return client.put(`/trip/${trip_id}`, data);
   },
 };
 

@@ -1,6 +1,34 @@
 const axios = require("axios");
-const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 const Trip = require("../models/trip.model");
+
+// Validation errors from the model are the client's fault, not the server's
+const errorStatus = (error) =>
+  error instanceof mongoose.Error.ValidationError ||
+  error instanceof mongoose.Error.CastError ||
+  error.status === 400
+    ? 400
+    : 500;
+
+// Loads the trip in req.params and checks it belongs to the signed-in user.
+// Sends the error response itself and returns null when it doesn't.
+const findOwnTrip = async (req, res) => {
+  const { trip_id } = req.params;
+  if (!mongoose.isValidObjectId(trip_id)) {
+    res.status(404).json({ message: "Trip not found" });
+    return null;
+  }
+  const trip = await Trip.findById(trip_id);
+  if (!trip) {
+    res.status(404).json({ message: "Trip not found" });
+    return null;
+  }
+  if (trip.user_id.toString() !== req.userId) {
+    res.status(403).json({ message: "Forbidden" });
+    return null;
+  }
+  return trip;
+};
 
 const tripController = {
   getPlacesbyKeyword: (req, res) => {
@@ -73,9 +101,6 @@ const tripController = {
   },
   createTrip: async (req, res) => {
     try {
-      const token = req.headers.authorization.split(" ")[1];
-      const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
-      const user_id = decoded.userId;
       const {
         trip_name,
         trip_location,
@@ -89,7 +114,7 @@ const tripController = {
         trip_location: trip_location,
         trip_start_date: trip_start_date,
         trip_end_date: trip_end_date,
-        user_id: user_id,
+        user_id: req.userId,
         daily_budget: daily_budget,
       });
 
@@ -101,20 +126,12 @@ const tripController = {
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ message: error.message });
+      res.status(errorStatus(error)).json({ message: error.message });
     }
   },
   getTripbyUserId: async (req, res) => {
     try {
-      if (!req.headers.authorization) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-      const token = req.headers.authorization.split(" ")[1];
-      const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
-      const user_id = decoded.userId;
-
-      const trip = await Trip.find({ user_id: user_id });
-      // console.log(trip);
+      const trip = await Trip.find({ user_id: req.userId });
       res.status(200).json({
         message: "Get Trip successfully",
         data: trip,
@@ -127,34 +144,24 @@ const tripController = {
   },
   updateTripbyId: async (req, res) => {
     try {
-      if (!req.headers.authorization) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-      const token = req.headers.authorization.split(" ")[1];
-      const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
-      const user_id = decoded.userId;
+      const trip = await findOwnTrip(req, res);
+      if (!trip) return;
 
-      const { trip_id } = req.params;
-      const {
-        trip_name,
-        trip_location,
-        trip_start_date,
-        trip_end_date,
-        daily_budget,
-        trip_plan,
-      } = req.body;
-
-      const trip = await Trip.findById(trip_id);
-      if (!trip) {
-        return res.status(404).json({ message: "Trip not found" });
-      }
-
-      trip.trip_name = trip_name;
-      trip.trip_location = trip_location;
-      trip.trip_start_date = trip_start_date;
-      trip.trip_end_date = trip_end_date;
-      trip.daily_budget = daily_budget;
-      trip.trip_plan = trip_plan;
+      // only overwrite the fields the client actually sent
+      const fields = [
+        "trip_name",
+        "trip_location",
+        "trip_start_date",
+        "trip_end_date",
+        "daily_budget",
+        "trip_plan",
+      ];
+      fields.forEach((field) => {
+        if (req.body[field] !== undefined) {
+          trip[field] = req.body[field];
+        }
+      });
+      trip.markModified("trip_plan");
 
       const updatedTrip = await trip.save();
       res.status(200).json({
@@ -164,26 +171,13 @@ const tripController = {
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ message: error.message });
+      res.status(errorStatus(error)).json({ message: error.message });
     }
   },
   getTripbyId: async (req, res) => {
     try {
-      if (!req.headers.authorization) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-      const token = req.headers.authorization.split(" ")[1];
-      const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
-      const user_id = decoded.userId;
-
-      const { trip_id } = req.params;
-      const trip = await Trip.findById({ _id: trip_id });
-      if (!trip) {
-        return res.status(404).json({ message: "Trip not found" });
-      }
-      if (trip.user_id != user_id) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
+      const trip = await findOwnTrip(req, res);
+      if (!trip) return;
       res.status(200).json({
         message: "Get Trip successfully",
         data: trip,

@@ -14,8 +14,8 @@ import {
   Stack,
   Button,
 } from "@chakra-ui/react";
-import { useLocation, useNavigate } from "react-router-dom";
-import api from "../utils/api";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import api, { errorMessage } from "../utils/api";
 import { format, eachDayOfInterval } from "date-fns";
 import swal from "sweetalert2";
 
@@ -177,10 +177,15 @@ const TripInfo = () => {
       trip_plan: tripPlan,
     };
     try {
-      const result = await api.updateTripbyId(data, trip_id);
-      console.log(result);
+      await api.updateTripbyId(data, trip_id);
     } catch (error) {
-      console.log(error);
+      swal.fire({
+        title: "Could not save trip",
+        text: errorMessage(error),
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+      return;
     }
     swal
       .fire({
@@ -332,4 +337,14 @@ const TripInfo = () => {
   );
 };
 
-export default TripInfo;
+// Trips are opened from the trip list, which passes the trip in router
+// state; without it (e.g. after a refresh) go back to the list.
+const TripInfoPage = () => {
+  const location = useLocation();
+  if (!location.state?.data) {
+    return <Navigate to="/trips" replace />;
+  }
+  return <TripInfo />;
+};
+
+export default TripInfoPage;
